@@ -1,0 +1,30 @@
+# Virtual Environment
+venv_gpu/
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# PyTorch Checkpoints & Data
+*.pt
+*.pth
+*.ckpt
+data/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

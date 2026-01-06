@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grammar_correction"
+version = "0.1.0"
+description = "Transformer-based Grammar Correction Model"
+dependencies = [
+    "torch",
+    "transformers",
+    "datasets",
+    "numpy",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort",
+    "flake8"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
