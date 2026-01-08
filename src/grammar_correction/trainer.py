@@ -115,7 +115,7 @@ def run_epoch(
         tgt_mask = tgt_mask[:, :, :-1, :-1]
         
         # Mixed Precision Context
-        with torch.cuda.amp.autocast():
+        with torch.amp.autocast('cuda'):
             out = model.forward(src, decoder_input, src_mask, tgt_mask)
             loss = loss_compute(out, target, batch['tgt_mask'][:, 1:, 1:])
         
