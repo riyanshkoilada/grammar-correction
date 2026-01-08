@@ -25,7 +25,7 @@ class GrammarDataset(Dataset):
             if num_samples:
                 split_name = f"train[:{num_samples}]"
             
-            self.dataset = load_dataset("liweili/c4_200m", split=split_name, streaming=False)
+            self.dataset = load_dataset("liweili/c4_200m", split=split_name, streaming=False, trust_remote_code=True)
             self.data = self.dataset
             
             if len(self.data) > 0:
@@ -33,7 +33,7 @@ class GrammarDataset(Dataset):
                 
         elif split == 'validation':
             # Using JFLEG for validation
-            self.dataset = load_dataset("jfleg", split="validation[:100]") # Small subset
+            self.dataset = load_dataset("jfleg", split="validation[:100]", trust_remote_code=True) # Small subset
             self.data = [{'input': item['sentence'], 'output': item['corrections'][0]} for item in self.dataset]
         
         print(f"Loaded {len(self.data)} samples for {split}.")
