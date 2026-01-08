@@ -84,7 +84,7 @@ def load_checkpoint(
 
 
 # Mixed Precision Scaler
-scaler = torch.cuda.amp.GradScaler()
+scaler = torch.amp.GradScaler('cuda')
 
 def run_epoch(
     data_iter: Iterator,

@@ -66,8 +66,12 @@ def correct_grammar(input_text, model, tokenizer, device):
     # We trained with tgt shifted.
     # If we assume standard T5 training, decoder input starts with pad (0).
     
+
     decoded_text = tokenizer.decode(out_tokens[0], skip_special_tokens=True)
     return decoded_text
+
+infer = correct_grammar
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
