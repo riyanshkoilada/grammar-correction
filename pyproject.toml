@@ -9,7 +9,7 @@ description = "Transformer-based Grammar Correction Model"
 dependencies = [
     "torch",
     "transformers",
-    "datasets",
+    "datasets<2.20.0",
     "numpy",
 ]
 requires-python = ">=3.8"
