@@ -202,7 +202,9 @@ def train(args: argparse.Namespace) -> None:
         train_dataset, 
         batch_size=args.batch_size, 
         shuffle=True, 
-        collate_fn=collate_batch
+        collate_fn=collate_batch,
+        num_workers=args.num_workers,
+        pin_memory=True if args.device != 'cpu' else False
     )
     
     # Model
@@ -216,6 +218,15 @@ def train(args: argparse.Namespace) -> None:
         h=args.heads
     )
     model.to(device)
+
+    # Optional optimizations
+    if args.tf32 and device.type == 'cuda':
+        logger.info("Enabling TensorFloat-32 (TF32)")
+        torch.set_float32_matmul_precision('high')
+    
+    if args.compile:
+        logger.info("Compiling model with torch.compile...")
+        model = torch.compile(model)
     
     # Optimizer
     optimizer = NoamOpt(
@@ -275,6 +286,11 @@ def parse_args() -> argparse.Namespace:
     
     # Resume
     parser.add_argument("--resume_from", type=str, default=None, help="Path to checkpoint to resume from")
+
+    # Optimization
+    parser.add_argument("--compile", action="store_true", help="Use torch.compile")
+    parser.add_argument("--num_workers", type=int, default=4, help="DataLoader num_workers")
+    parser.add_argument("--tf32", action="store_true", default=True, help="Enable TF32 (default: True)")
     
     return parser.parse_args()
 

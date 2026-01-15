@@ -238,14 +238,28 @@ class Decoder(nn.Module):
 
 def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, mask: Optional[torch.Tensor] = None, dropout: Optional[nn.Dropout] = None) -> Tuple[torch.Tensor, torch.Tensor]:
     """Compute 'Scaled Dot Product Attention'."""
-    d_k = query.size(-1)
-    scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
-    if mask is not None:
-        scores = scores.masked_fill(mask == 0, -1e4)
-    p_attn = F.softmax(scores, dim=-1)
+    """Compute 'Scaled Dot Product Attention' using PyTorch 2.0 SDPA for Flash Attention."""
+    # SDPA expects query, key, value to be (batch, heads, seq_len, head_dim)
+    # The caller manages dimensions.
+    
+    # Handle dropout for SDPA
+    dropout_p = 0.0
     if dropout is not None:
-        p_attn = dropout(p_attn)
-    return torch.matmul(p_attn, value), p_attn
+        dropout_p = dropout.p
+
+    # mask in current codebase is 1 for keep, 0 for discard.
+    # SDPA supports boolean mask where True = keep.
+    attn_mask = mask
+    if attn_mask is not None:
+        # Convert 1/0 mask to boolean if it isn't already
+        if attn_mask.dtype != torch.bool:
+             attn_mask = attn_mask.bool()
+
+    # Efficient implementation using Flash Attention if available (CUDA)
+    # or efficient C++ implementation on CPU.
+    return F.scaled_dot_product_attention(
+        query, key, value, attn_mask=attn_mask, dropout_p=dropout_p
+    ), None
 
 class MultiHeadAttention(nn.Module):
     """Implements Multi-Head Attention."""

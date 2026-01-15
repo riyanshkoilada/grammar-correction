@@ -11,6 +11,8 @@ dependencies = [
     "transformers",
     "datasets<2.20.0",
     "numpy",
+    "sentencepiece",
+    "protobuf",
 ]
 requires-python = ">=3.8"
 
